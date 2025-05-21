@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEGARDENER - Solana Market-Making Toolkit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #3E7C41;
+            --secondary-green: #A5D6A7;
+            --background: #F9F5EB;
+            --text: #1B4332;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--background);
+            box-shadow: 0 2px 15px var(--shadow);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+        }
+
+        .logo-text {
+            color: var(--text);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: var(--secondary-green);
+        }
+
+        nav a.active {
+            background-color: var(--primary-green);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(165, 214, 167, 0.3) 0%, rgba(62, 124, 65, 0.15) 100%);
+            padding: 80px 0;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%233E7C41' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            max-height: 400px;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: var(--primary-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .button:hover {
+            background-color: #2E5E31;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        .button.outline:hover {
+            background-color: rgba(62, 124, 65, 0.1);
+        }
+
+        /* Features Section */
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .section-title p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            color: rgba(27, 67, 50, 0.8);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px var(--shadow);
+            padding: 30px;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: var(--primary-green);
+            opacity: 0.8;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .feature-card p {
+            color: rgba(27, 67, 50, 0.8);
+            margin-bottom: 20px;
+        }
+
+        .feature-link {
+            margin-top: auto;
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: gap 0.3s;
+        }
+
+        .feature-link:hover {
+            gap: 8px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background-color: var(--text);
+            color: white;
+            padding: 80px 0;
+            margin: 80px 0;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23A5D6A7' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.6;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .button.light {
+            background-color: white;
+            color: var(--text);
+        }
+
+        .button.light:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .footer-logo {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .footer-logo-img {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-logo img {
+            height: 40px;
+        }
+
+        .footer-logo p {
+            max-width: 280px;
+            opacity: 0.8;
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+
+        .footer-links-group h4 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-links-group h4::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 30px;
+            height: 2px;
+            background-color: var(--secondary-green);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-green);
+            transform: translateX(3px);
+        }
+
+        .copyright {
+            width: 100%;
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background-color: var(--secondary-green);
+            color: var(--text);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2.3rem;
+            }
+
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-content h2 {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .footer-logo {
+                align-items: center;
+            }
+
+            .footer-links-group h4::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="LEGARDENER Logo">
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="wallet-gen.html">Wallet Generator</a></li>
+                    <li><a href="bulk-transfer.html">Bulk Transfer</a></li>
+                    <li><a href="withdraw.html">CEX Withdrawal</a></li>
+                    <li><a href="market-swap.html">Token Swap</a></li>
+                    <li><a href="settings.html">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <h1>Solana Market-Making Tools</h1>
+                <p>LEGARDENER provides a comprehensive suite of tools for efficient Solana wallet management, asset transfers, and market operations - all with enhanced privacy and security.</p>
+                <div class="hero-buttons">
+                    <a href="wallet-gen.html" class="button">Get Started</a>
+                    <a href="#features" class="button outline">Explore Features</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="logo.png" alt="LEGARDENER Illustration">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container" id="features">
+        <div class="section-title">
+            <h2>Premium Solana Tools</h2>
+            <p>Discover our comprehensive set of tools designed to streamline your Solana market operations</p>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h3>Wallet Generator</h3>
+                <p>Generate multiple Solana wallets with complete privacy. All generation happens offline, directly in your browser. Export with optional password protection.</p>
+                <a href="wallet-gen.html" class="feature-link">Generate Wallets <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h3>Bulk Transfer</h3>
+                <p>Efficiently move assets between multiple wallets with our batch transfer tool. Import source and destination addresses in bulk for seamless operations.</p>
+                <a href="bulk-transfer.html" class="feature-link">Transfer Assets <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-university"></i>
+                </div>
+                <h3>CEX Withdrawal</h3>
+                <p>Automate withdrawals from centralized exchanges to multiple wallets with customizable distribution patterns and scheduling options.</p>
+                <a href="withdraw.html" class="feature-link">Manage Withdrawals <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h3>Token Swap</h3>
+                <p>Execute token swaps across multiple wallets simultaneously. Set parameters for slippage, routing, and token pairs to optimize your trading strategy.</p>
+                <a href="market-swap.html" class="feature-link">Swap Tokens <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Privacy-Focused</h3>
+                <p>All sensitive operations happen client-side. Private keys never leave your device, ensuring maximum security and privacy for your assets.</p>
+                <a href="settings.html" class="feature-link">Security Settings <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3>Advanced Settings</h3>
+                <p>Customize your experience with network settings, RPC endpoints, local storage preferences, and appearance options.</p>
+                <a href="settings.html" class="feature-link">Configure Settings <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <div class="container">
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>Ready to Optimize Your Solana Operations?</h2>
+                <p>Start with our wallet generator tool and see how LEGARDENER can enhance your market-making workflow.</p>
+                <div class="cta-buttons">
+                    <a href="wallet-gen.html" class="button light">Generate Wallets</a>
+                    <a href="bulk-transfer.html" class="button">Explore Bulk Transfer</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <div class="footer-logo-img">
+                    <img src="logo.png" alt="LEGARDENER Logo">
+                </div>
+                <p>Premium tools for Solana market operations with a focus on security, privacy, and efficiency.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>Tools</h4>
+                <div class="footer-links">
+                    <a href="wallet-gen.html">Wallet Generator</a>
+                    <a href="bulk-transfer.html">Bulk Transfer</a>
+                    <a href="withdraw.html">CEX Withdrawal</a>
+                    <a href="market-swap.html">Token Swap</a>
+                    <a href="settings.html">Settings</a>
+                </div>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>Resources</h4>
+                <div class="footer-links">
+                    <a href="#">Documentation</a>
+                    <a href="#">API Reference</a>
+                    <a href="#">Tutorials</a>
+                    <a href="#">FAQs</a>
+                </div>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>Legal</h4>
+                <div class="footer-links">
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Disclaimer</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+
+            <div class="copyright">
+                &copy; 2023 LEGARDENER. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Event listener for smooth scrolling to features section
+        document.querySelector('a[href="#features"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('#features').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html> 

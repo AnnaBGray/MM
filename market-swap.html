@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Maker - LEGARDENER</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #3E7C41;
+            --secondary-green: #A5D6A7;
+            --background: #F9F5EB;
+            --text: #1B4332;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--background);
+            box-shadow: 0 2px 15px var(--shadow);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: var(--secondary-green);
+        }
+
+        nav a.active {
+            background-color: var(--primary-green);
+            color: white;
+        }
+
+        /* Page Header */
+        .page-header {
+            background-color: rgba(165, 214, 167, 0.2);
+            padding: 40px 0;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .page-header p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        /* Card Component */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px var(--shadow);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header h2 {
+            font-size: 1.8rem;
+            color: var(--text);
+        }
+
+        .section-divider {
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            margin: 30px 0;
+            padding-top: 30px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(62, 124, 65, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: var(--background);
+            color: var(--text);
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(62, 124, 65, 0.2);
+        }
+
+        .textarea-control {
+            min-height: 120px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: var(--primary-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .button:hover {
+            background-color: #2E5E31;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .button.secondary {
+            background-color: var(--secondary-green);
+            color: var(--text);
+            margin-left: 15px;
+        }
+
+        .button.secondary:hover {
+            background-color: #8DC68F;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+        
+        .form-actions .button {
+            min-width: 180px;
+        }
+
+        /* Swap Pair Item */
+        .swap-pair {
+            background-color: var(--background);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .swap-pair:hover {
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .swap-pair-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .swap-pair-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--primary-green);
+        }
+
+        .swap-direction {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .swap-token {
+            flex: 1;
+            padding: 12px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .swap-token .form-group {
+            margin-bottom: 10px;
+        }
+        
+        .swap-token .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .swap-arrow {
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 30px;
+            width: 30px;
+        }
+
+        .remove-pair {
+            color: #e53935;
+            cursor: pointer;
+            font-size: 1.2rem;
+            background: none;
+            border: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .remove-pair:hover {
+            background-color: rgba(229, 57, 53, 0.1);
+        }
+
+        /* Batch Summary */
+        .batch-summary {
+            background-color: rgba(165, 214, 167, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid var(--primary-green);
+        }
+        
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .summary-stats {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Results Section */
+        .results-card {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .results-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .results-card .card-header h2 {
+            margin: 0;
+        }
+
+        .transaction-status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+        
+        .transaction-status:hover {
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .status-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .status-error {
+            background-color: rgba(244, 67, 54, 0.1);
+            border-left: 4px solid #F44336;
+        }
+
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #FFC107;
+        }
+
+        .transaction-id {
+            font-family: monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+
+        /* Skeleton Loading */
+        .skeleton-loader {
+            display: none;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            height: 20px;
+            margin-bottom: 10px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Network Status */
+        .network-status {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #F44336;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 500;
+        }
+
+        .network-status i {
+            margin-right: 10px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal h3 {
+            margin-bottom: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-logo img {
+            height: 40px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-green);
+        }
+
+        .copyright {
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        /* Swap list */
+        .swap-list {
+            max-height: 600px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        /* Section Tabs */
+        .section-tabs {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 5px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        }
+        
+        .tab-item {
+            padding: 10px 20px;
+            border-radius: 6px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .tab-item:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .tab-item.active {
+            background-color: white;
+            color: var(--primary-green);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+        }
+        
+        /* Wallet Connection */
+        .wallet-connection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .wallet-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .wallet-button:hover {
+            border-color: var(--primary-green);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .wallet-button img {
+            height: 24px;
+            width: 24px;
+        }
+        
+        .connected-wallet {
+            display: none;
+            padding: 12px 15px;
+            background-color: rgba(62, 124, 65, 0.1);
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid var(--primary-green);
+        }
+        
+        .connected-wallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .wallet-address {
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        
+        .disconnect-button {
+            color: #e53935;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Slippage Options */
+        .slippage-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .slippage-preset {
+            background-color: var(--background);
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        
+        .slippage-preset:hover {
+            border-color: var(--primary-green);
+        }
+        
+        .slippage-preset.active {
+            background-color: var(--primary-green);
+            color: white;
+            border-color: var(--primary-green);
+        }
+        
+        /* Form helper text */
+        .form-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Two-column layout */
+        .form-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .form-column {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @media (max-width: 992px) {
+            .form-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .button.secondary {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .footer-logo {
+                justify-content: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+
+            .summary-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .swap-direction {
+                flex-direction: column;
+            }
+            
+            .swap-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Status colors */
+        .status-ready {
+            color: var(--primary-green);
+            font-weight: 500;
+        }
+        
+        .status-processing {
+            color: #2196F3;
+            font-weight: 500;
+        }
+        
+        .status-completed {
+            color: #4CAF50;
+            font-weight: 500;
+        }
+        
+        .status-paused {
+            color: #FF9800;
+            font-weight: 500;
+        }
+        
+        .status-error {
+            color: #F44336;
+            font-weight: 500;
+        }
+        
+        /* Wallet action buttons */
+        .wallet-action-btn {
+            background-color: var(--background);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+        
+        .wallet-action-btn:hover {
+            background-color: white;
+            border-color: var(--primary-green);
+        }
+        
+        .wallet-action-btn.toggle-status:hover {
+            background-color: rgba(62, 124, 65, 0.1);
+        }
+        
+        .wallet-action-btn.remove-wallet:hover {
+            background-color: rgba(244, 67, 54, 0.1);
+            border-color: #F44336;
+        }
+        
+        /* Tab content */
+        .tab-content {
+            display: none;
+            padding: 15px 0;
+        }
+
+        /* Batch configuration custom styles */
+        .batch-config-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .batch-config-button {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .batch-config-button:hover {
+            background-color: #34693A;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .batch-config-button i {
+            font-size: 1rem;
+        }
+        
+        .config-textarea {
+            width: 100%;
+            min-height: 140px;
+            resize: vertical;
+            font-family: monospace;
+            font-size: 0.9rem;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: var(--background);
+            transition: border-color 0.3s;
+        }
+        
+        .config-textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(62, 124, 65, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="LEGARDENER Logo">
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="wallet-gen.html">Wallet Generator</a></li>
+                    <li><a href="bulk-transfer.html">Bulk Transfer</a></li>
+                    <li><a href="withdraw.html">CEX Withdrawal</a></li>
+                    <li><a href="market-swap.html" class="active">Market Maker</a></li>
+                    <li><a href="settings.html">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Market Maker</h1>
+            <p>Dashboard and batch swap tools for automated trading and liquidity provision on Solana markets.</p>
+            
+            <!-- Subtitles/Tabs -->
+            <div class="section-tabs">
+                <a href="#" class="tab-item">Dashboard</a>
+                <a href="#" class="tab-item active">Batch Swap</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Batch Swap Configuration</h2>
+                <p style="color: #666; margin-top: 5px; max-width: 700px;">Configure all options for batch market-making operations across multiple wallets and DEXs.</p>
+            </div>
+
+            <form id="batch-swap-form">
+                <!-- Two-column layout for top sections -->
+                <div class="form-columns">
+                    <!-- Left Column: Wallet Source -->
+                    <div class="form-column">
+                        <!-- Wallet Connection Options - Left side -->
+                        <div class="form-group" style="margin-bottom: 20px; height: 100%;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(0, 0, 0, 0.05); padding-bottom: 10px;">
+                                <div style="font-weight: 600; font-size: 1.05rem; display: flex; align-items: center;">
+                                    <i class="fas fa-plug" style="margin-right: 10px; color: var(--primary-green);"></i>
+                                    Wallet Source
+                                </div>
+                            </div>
+                            <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); padding: 15px; display: flex; flex-direction: column; gap: 20px; height: calc(100% - 40px);">
+                                <div style="margin-bottom: 10px;">
+                                    <label for="walletSourceSelect" style="display: block; margin-bottom: 8px; font-weight: 500;">Select Source:</label>
+                                    <select id="walletSourceSelect" class="form-control">
+                                        <option value="private-key">Private Keys</option>
+                                        <option value="browser-wallet">Browser Wallet</option>
+                                        <option value="hardware-wallet">Hardware Wallet</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Browser Wallet Connection -->
+                                <div id="browser-wallet-group" style="display: none; margin-top: 10px;">
+                                    <div class="wallet-connection">
+                                        <button type="button" class="wallet-button" id="phantomWalletBtn">
+                                            <img src="https://www.phantom.app/img/logo.png" alt="Phantom">
+                                            Phantom
+                                        </button>
+                                        <button type="button" class="wallet-button" id="solflareWalletBtn">
+                                            <img src="https://solflare.com/assets/logo.svg" alt="Solflare">
+                                            Solflare
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="connected-wallet" id="connectedWalletInfo">
+                                        <div class="connected-wallet-header">
+                                            <strong>Connected Wallet</strong>
+                                            <button type="button" class="disconnect-button" id="disconnectWalletBtn">
+                                                <i class="fas fa-unlink"></i> Disconnect
+                                            </button>
+                                        </div>
+                                        <div class="wallet-address" id="walletAddressDisplay">Not connected</div>
+                                        <div style="margin-top: 5px;">
+                                            <span id="walletBalanceDisplay">Balance: 0 SOL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Private Keys -->
+                    <div class="form-column">
+                        <!-- Private Key Input - Right side -->
+                        <div class="form-group" id="privateKeyGroup" style="max-width: 100%; margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(0, 0, 0, 0.05); padding-bottom: 10px;">
+                                <label for="walletKeys" style="margin-bottom: 0; font-weight: 600; font-size: 1.05rem; display: flex; align-items: center;">
+                                    <i class="fas fa-key" style="margin-right: 10px; color: var(--primary-green);"></i>
+                                    Wallet Private Keys
+                                </label>
+                                <div class="batch-config-buttons">
+                                    <label for="privateKeyFile" class="batch-config-button" style="display: inline-flex; align-items: center; font-size: 14px; padding: 8px 15px; box-sizing: border-box; height: 36px; line-height: 1;">
+                                        <i class="fas fa-upload"></i> Upload File
+                                        <input type="file" id="privateKeyFile" style="display: none;" accept=".txt,.csv,.json">
+                                    </label>
+                                    <button type="button" id="detectBalancesBtn" class="batch-config-button" style="font-size: 14px; padding: 8px 15px; height: 36px; line-height: 1;">
+                                        <i class="fas fa-search-dollar"></i> Detect Balances
+                                    </button>
+                                </div>
+                            </div>
+                            <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); padding: 15px;">
+                                <textarea id="walletKeys" class="config-textarea" placeholder="Enter Solana wallet private keys, one per line" style="min-height: 200px; width: 100%; border: 1px solid #ddd;"></textarea>
+                                
+                                <!-- Wallet count indicator similar to wallet generator -->
+                                <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px; color: #666;">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span id="walletCountIndicator">0 wallets detected</span>
+                                    <span style="margin-left: auto; font-style: italic; font-size: 0.9rem;">One private key per line</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unified Wallet Management Section - Combined list, status, and options -->
+                <div class="section" style="margin-top: 20px;" id="walletDetailsSection">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(0, 0, 0, 0.05); padding-bottom: 10px;">
+                        <h3 style="margin-bottom: 0; display: flex; align-items: center; font-weight: 600; font-size: 1.05rem;">
+                            <i class="fas fa-wallet" style="margin-right: 10px; color: var(--primary-green);"></i>
+                            Wallet Management
+                        </h3>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" id="clearWalletBtn" class="batch-config-button" style="background-color: #e53935; font-size: 14px; padding: 8px 15px; height: 36px; line-height: 1;">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                            <button type="button" id="refreshWalletBtn" class="batch-config-button" style="font-size: 14px; padding: 8px 15px; height: 36px; line-height: 1;">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="wallet-management-table" style="background-color: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); padding: 15px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: left; padding: 10px; background-color: rgba(62, 124, 65, 0.1); border-radius: 4px 0 0 0;">Wallet Address</th>
+                                    <th style="text-align: center; padding: 10px; background-color: rgba(62, 124, 65, 0.1);">Balances</th>
+                                    <th style="text-align: center; padding: 10px; background-color: rgba(62, 124, 65, 0.1);">Status</th>
+                                    <th style="text-align: center; padding: 10px; background-color: rgba(62, 124, 65, 0.1);">Last Transaction</th>
+                                    <th style="text-align: right; padding: 10px; background-color: rgba(62, 124, 65, 0.1); border-radius: 0 4px 0 0;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="walletManagementTableBody">
+                                <!-- Combined wallet entries will be added here -->
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 25px; color: #666;">
+                                        No wallets detected. Add private keys or connect wallet to view details.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Execution settings after wallet part -->
+                <div class="form-columns" style="margin-top: 20px;">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="executionThreads">Concurrent Execution Threads</label>
+                            <input type="number" id="executionThreads" class="form-control" placeholder="3" min="1" max="10" value="3">
+                            <small class="form-text">Number of wallets to process simultaneously.</small>
+                        </div>
+                    </div>
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label>Execution Order</label>
+                            <div style="display: flex; gap: 20px; margin-top: 10px;">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <input type="radio" id="orderSequential" name="executionOrder" value="sequential" checked>
+                                    <label for="orderSequential">Sequential</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <input type="radio" id="orderRandom" name="executionOrder" value="random">
+                                    <label for="orderRandom">Random</label>
+                                </div>
+                            </div>
+                            <small class="form-text">Sequential executes in order provided. Random shuffles wallet order.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compact 2x2 grid for DEX/AMM, RPC, Priority, Slippage -->
+                <div class="form-columns" style="margin-top: 20px;">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="dexSource">DEX/AMM Source</label>
+                            <select id="dexSource" class="form-control">
+                                <option value="jupiter">Jupiter Aggregator (Best Price)</option>
+                                <option value="orca">Orca</option>
+                                <option value="raydium">Raydium</option>
+                                <option value="openbook">OpenBook</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="rpcEndpoint">RPC Endpoint</label>
+                            <select id="rpcEndpoint" class="form-control">
+                                <option value="mainnet-beta">Mainnet (Public)</option>
+                                <option value="quicknode">QuickNode (Enhanced)</option>
+                                <option value="custom">Custom Endpoint</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="customRpcGroup" style="display: none; margin-top: 10px; padding: 12px; background-color: rgba(62, 124, 65, 0.05); border-radius: 8px; border-left: 3px solid var(--primary-green);">
+                            <label for="customRpcUrl" style="display: block; margin-bottom: 8px; font-weight: 500;">Custom RPC URL:</label>
+                            <input type="text" id="customRpcUrl" class="form-control" placeholder="https://your-rpc-endpoint.com" style="border: 1px solid var(--primary-green); background-color: white;">
+                            <small class="form-text">Enter your private RPC endpoint URL for better performance</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-columns" style="margin-top: 15px;">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="priorityFee">Priority Fee (microLAMPORTS)</label>
+                            <input type="number" id="priorityFee" class="form-control" placeholder="1000" min="0" value="1000">
+                            <small class="form-text">Higher priority fees increase chances of transaction confirmation.</small>
+                        </div>
+                    </div>
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label>Slippage Tolerance</label>
+                            <div class="slippage-options" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+                                <button type="button" class="slippage-preset active" data-value="0.5">0.5%</button>
+                                <button type="button" class="slippage-preset" data-value="1">1%</button>
+                                <button type="button" class="slippage-preset" data-value="5">5%</button>
+                                <button type="button" class="slippage-preset" data-value="10">10%</button>
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <button type="button" class="slippage-preset" data-value="custom">Custom</button>
+                                    <input type="number" id="slippageTolerance" class="form-control" placeholder="0.5" step="0.1" min="0" value="0.5" style="width: 80px; margin: 0;">
+                                    <span style="font-weight: 500;">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Batch Summary - Updated for more compact design -->
+                <div class="batch-summary" id="batchSummary" style="margin-top: 20px;">
+                    <div class="summary-header">
+                        <h3>Batch Summary</h3>
+                        <button type="button" id="refreshSummaryBtn" class="button secondary" style="font-size: 14px; padding: 8px 15px; height: 36px; line-height: 1; display: inline-flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-wallet"></i>
+                            <div>
+                                <div class="stat-value" id="walletCount">0</div>
+                                <div class="stat-label">Wallets</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-exchange-alt"></i>
+                            <div>
+                                <div class="stat-value" id="swapPairCount">0</div>
+                                <div class="stat-label">Swap Pairs</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-bolt"></i>
+                            <div>
+                                <div class="stat-value" id="totalTransactions">0</div>
+                                <div class="stat-label">Total Transactions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Swap Pairs Configuration (full width) -->
+                <div class="section" style="margin-top: 20px;">
+                    <h3 class="section-title">
+                        <div class="section-icon"><i class="fas fa-sync-alt"></i></div>
+                        Swap Pairs
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label>Configure your batch swap pairs</label>
+                        <p style="margin-bottom: 15px; font-size: 0.9rem; color: #666;">Add multiple swap pairs to execute in batch. Each wallet will perform all swaps in the order listed.</p>
+                    </div>
+
+                    <div id="swap-list" class="swap-list">
+                        <!-- Swap pairs will be added here -->
+                    </div>
+
+                    <button type="button" id="addSwapBtn" class="button secondary" style="font-size: 14px; padding: 8px 15px; height: 36px; line-height: 1; display: inline-flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-plus"></i> Add Swap Pair
+                    </button>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="executeSwapsBtn" class="button">Execute Batch Swaps</button>
+                    <button type="reset" id="resetBtn" class="button secondary">Reset Form</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Section (initially hidden) -->
+        <div class="card results-card" id="results-section">
+            <div class="card-header">
+                <h2>Swap Results</h2>
+            </div>
+            
+            <!-- Skeleton loading effect -->
+            <div class="skeleton-loader" id="skeleton-loader">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+
+            <!-- Results will be populated by JavaScript -->
+            <div id="results-content"></div>
+        </div>
+    </main>
+
+    <!-- Network Status Indicator -->
+    <div class="network-status" id="networkStatus">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Network connection lost. Reconnecting...</span>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <h3>Confirm Action</h3>
+            <p id="modalMessage">Are you sure you want to proceed with this action?</p>
+            <div class="modal-buttons">
+                <button class="button" id="confirmButton">Confirm</button>
+                <button class="button secondary" id="cancelButton">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <img src="logo.png" alt="LEGARDENER Logo">
+            </div>
+            <div class="footer-links">
+                <a href="#">Documentation</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="copyright">
+                &copy; 2023 LEGARDENER. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const walletSourceSelect = document.getElementById('walletSourceSelect');
+        const privateKeyGroup = document.getElementById('privateKeyGroup');
+        const browserWalletGroup = document.getElementById('browser-wallet-group');
+        const walletKeysTextarea = document.getElementById('walletKeys');
+        const dexSourceSelect = document.getElementById('dexSource');
+        const slippageToleranceInput = document.getElementById('slippageTolerance');
+        const swapListContainer = document.getElementById('swap-list');
+        const addSwapBtn = document.getElementById('addSwapBtn');
+        const executeSwapsBtn = document.getElementById('executeSwapsBtn');
+        const refreshSummaryBtn = document.getElementById('refreshSummaryBtn');
+        const walletCountEl = document.getElementById('walletCount');
+        const walletCountIndicator = document.getElementById('walletCountIndicator');
+        const swapPairCountEl = document.getElementById('swapPairCount');
+        const totalTransactionsEl = document.getElementById('totalTransactions');
+        const resultsSection = document.getElementById('results-section');
+        const skeletonLoader = document.getElementById('skeleton-loader');
+        const resultsContent = document.getElementById('results-content');
+        const resetBtn = document.getElementById('resetBtn');
+        const phantomWalletBtn = document.getElementById('phantomWalletBtn');
+        const solflareWalletBtn = document.getElementById('solflareWalletBtn');
+        const disconnectWalletBtn = document.getElementById('disconnectWalletBtn');
+        const connectedWalletInfo = document.getElementById('connectedWalletInfo');
+        const walletAddressDisplay = document.getElementById('walletAddressDisplay');
+        const walletBalanceDisplay = document.getElementById('walletBalanceDisplay');
+        const rpcEndpointSelect = document.getElementById('rpcEndpoint');
+        const customRpcGroup = document.getElementById('customRpcGroup');
+        const customRpcUrlInput = document.getElementById('customRpcUrl');
+        const priorityFee = document.getElementById('priorityFee');
+        const executionThreads = document.getElementById('executionThreads');
+        const slippagePresets = document.querySelectorAll('.slippage-preset');
+        const privateKeyFileInput = document.getElementById('privateKeyFile');
+        const detectBalancesBtn = document.getElementById('detectBalancesBtn');
+        const walletDetailsSection = document.getElementById('walletDetailsSection');
+        const walletManagementTableBody = document.getElementById('walletManagementTableBody');
+        const refreshWalletBtn = document.getElementById('refreshWalletBtn');
+        const clearWalletBtn = document.getElementById('clearWalletBtn');
+
+        // Available tokens
+        const availableTokens = [
+            { symbol: 'SOL', name: 'Solana' },
+            { symbol: 'USDC', name: 'USD Coin' },
+            { symbol: 'BONK', name: 'Bonk' },
+            { symbol: 'JUP', name: 'Jupiter' },
+            { symbol: 'RAY', name: 'Raydium' },
+            { symbol: 'ORCA', name: 'Orca' },
+            { symbol: 'SRM', name: 'Serum' },
+            { symbol: 'MNGO', name: 'Mango' },
+            { symbol: 'USDT', name: 'Tether' },
+            { symbol: 'ETH', name: 'Ethereum (Wormhole)' },
+            { symbol: 'BTC', name: 'Bitcoin (Wormhole)' },
+            { symbol: 'SAMO', name: 'Samoyedcoin' }
+        ];
+
+        // Wallet connection state
+        let walletConnectionState = {
+            connected: false,
+            provider: null,
+            publicKey: null,
+            balance: 0
+        };
+
+        // Wallets data array for tracking 
+        let walletsData = [];
+
+        // Swap pair counter
+        let swapPairCounter = 0;
+
+        // File upload for private keys
+        privateKeyFileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fileContent = e.target.result;
+                
+                try {
+                    // Try parsing as JSON first
+                    try {
+                        const jsonData = JSON.parse(fileContent);
+                        
+                        // Handle different JSON formats
+                        if (Array.isArray(jsonData)) {
+                            // Array format
+                            if (jsonData.length > 0) {
+                                if (typeof jsonData[0] === 'string') {
+                                    // Array of strings
+                                    walletKeysTextarea.value = jsonData.join('\n');
+                                } else if (typeof jsonData[0] === 'object') {
+                                    // Array of objects
+                                    const privateKeys = jsonData.map(item => 
+                                        item.privateKey || item.private_key || item.secretKey || item.secret_key || ''
+                                    ).filter(key => key);
+                                    
+                                    walletKeysTextarea.value = privateKeys.join('\n');
+                                }
+                            }
+                        } else if (typeof jsonData === 'object') {
+                            // Object format with keys
+                            const privateKeys = Object.values(jsonData)
+                                .filter(val => typeof val === 'string')
+                                .join('\n');
+                            
+                            walletKeysTextarea.value = privateKeys;
+                        }
+                    } catch (jsonError) {
+                        // Not JSON, try as text (CSV or plain text)
+                        // Split by newlines
+                        const lines = fileContent.split(/\r?\n/).filter(line => line.trim());
+                        
+                        if (lines.length > 0) {
+                            // Check if CSV with commas
+                            if (lines[0].includes(',')) {
+                                const privateKeys = lines.map(line => {
+                                    const parts = line.split(',');
+                                    // Return the second column if it exists (assuming address,privateKey format)
+                                    return parts.length > 1 ? parts[1].trim() : parts[0].trim();
+                                });
+                                
+                                walletKeysTextarea.value = privateKeys.join('\n');
+                            } else {
+                                // Plain text, one key per line
+                                walletKeysTextarea.value = lines.join('\n');
+                            }
+                        }
+                    }
+                    
+                    // Show success notification
+                    showModal(`Successfully imported ${walletKeysTextarea.value.split('\n').filter(line => line.trim()).length} private key(s). Would you like to detect balances now?`, function() {
+                        detectWalletBalances();
+                    });
+                    
+                    // Update batch summary
+                    updateBatchSummary();
+                    
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    showModal('Error processing file. Please check the file format and try again.');
+                }
+            };
+            
+            reader.readAsText(file);
+        });
+
+        // Detect balances button click
+        detectBalancesBtn.addEventListener('click', function() {
+            detectWalletBalances();
+        });
+
+        // Function to detect wallet balances
+        function detectWalletBalances() {
+            const wallets = parseSourceWallets();
+            
+            if (wallets.length === 0) {
+                showModal("Please enter at least one wallet private key first.");
+                return;
+            }
+            
+            // Show the wallet details section
+            walletDetailsSection.style.display = 'block';
+            
+            // Show loading state
+            walletManagementTableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 20px;">
+                        <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+                            <i class="fas fa-spinner fa-spin"></i> Fetching wallet balances...
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // Clear previous wallet data
+                walletsData = [];
+                
+                // Generate mock data for demo
+                walletManagementTableBody.innerHTML = '';
+                
+                wallets.forEach((wallet, index) => {
+                    // Generate demo data
+                    const walletAddress = generateRandomWalletAddress();
+                    const solBalance = (Math.random() * 10).toFixed(4);
+                    
+                    // Generate random token balances
+                    const tokenCount = Math.floor(Math.random() * 4); // 0-3 tokens
+                    const tokenBalances = [];
+                    
+                    for (let i = 0; i < tokenCount; i++) {
+                        const randomToken = availableTokens[Math.floor(Math.random() * availableTokens.length)];
+                        const randomAmount = (Math.random() * 1000).toFixed(2);
+                        tokenBalances.push(`${randomAmount} ${randomToken.symbol}`);
+                    }
+                    
+                    // Store wallet data
+                    walletsData.push({
+                        id: index,
+                        privateKey: wallet.privateKey,
+                        address: walletAddress,
+                        solBalance: parseFloat(solBalance),
+                        tokenBalances: tokenBalances,
+                        status: 'ready', // ready, processing, paused, completed, error
+                        error: null,
+                        transactions: []
+                    });
+                    
+                    // Add row to unified wallet management table
+                    const row = document.createElement('tr');
+                    row.style.borderBottom = '1px solid #eee';
+                    
+                    row.innerHTML = `
+                        <td style="padding: 10px;">
+                            <div style="font-family: monospace;">${formatWalletAddress(walletAddress)}</div>
+                        </td>
+                        <td style="text-align: center; padding: 10px;">
+                            <div>${solBalance} SOL</div>
+                            <div style="font-size: 0.85rem; color: #666; margin-top: 3px;">
+                                ${tokenBalances.length > 0 ? tokenBalances.join(', ') : 'No tokens'}
+                            </div>
+                        </td>
+                        <td style="text-align: center; padding: 10px;">
+                            <div class="status-ready">Ready</div>
+                        </td>
+                        <td style="text-align: center; padding: 10px;">
+                            <div>Not executed</div>
+                        </td>
+                        <td style="text-align: right; padding: 10px;">
+                            <div style="display: flex; gap: 5px; justify-content: flex-end;">
+                                <button type="button" class="wallet-action-btn toggle-status" data-wallet-id="${index}" data-action="pause">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button type="button" class="wallet-action-btn remove-wallet" data-wallet-id="${index}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    walletManagementTableBody.appendChild(row);
+                });
+                
+                // Add event listeners for buttons
+                addWalletActionListeners();
+                
+            }, 1500);
+        }
+        
+        // Add event listeners for wallet action buttons
+        function addWalletActionListeners() {
+            document.querySelectorAll('.toggle-status').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const walletId = parseInt(this.getAttribute('data-wallet-id'));
+                    const action = this.getAttribute('data-action');
+                    toggleWalletStatus(walletId, action);
+                });
+            });
+            
+            document.querySelectorAll('.remove-wallet').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const walletId = parseInt(this.getAttribute('data-wallet-id'));
+                    removeWallet(walletId);
+                });
+            });
+        }
+
+        // Update batch summary to include wallet data from textarea or connected wallet
+        function updateBatchSummary() {
+            let walletCount = 0;
+            const selectedSource = walletSourceSelect.value;
+            
+            if (selectedSource === 'private-key') {
+                walletCount = parseSourceWallets().length;
+            } else if (selectedSource === 'browser-wallet' && walletConnectionState.connected) {
+                walletCount = 1;
+            }
+            
+            const swapPairs = document.querySelectorAll('.swap-pair').length;
+            const totalTransactions = walletCount * swapPairs;
+            
+            // Update summary display
+            walletCountEl.textContent = walletCount;
+            swapPairCountEl.textContent = swapPairs;
+            totalTransactionsEl.textContent = totalTransactions;
+            
+            // Update wallet count indicator
+            if (walletCount === 0) {
+                walletCountIndicator.textContent = '0 wallets detected';
+            } else if (walletCount === 1) {
+                walletCountIndicator.textContent = '1 wallet detected';
+            } else {
+                walletCountIndicator.textContent = `${walletCount} wallets detected`;
+            }
+            
+            // Show/hide wallet details section based on wallet count
+            if (walletCount > 0 && walletsData.length === 0) {
+                // Show "Detect Balances" button visually to prompt the user
+                detectBalancesBtn.classList.add('highlight-btn');
+                setTimeout(() => {
+                    detectBalancesBtn.classList.remove('highlight-btn');
+                }, 2000);
+            }
+        }
+
+        // Execute batch swaps
+        executeSwapsBtn.addEventListener('click', function() {
+            if (!validateInputs()) return;
+            
+            let walletCount = 0;
+            let walletSource = walletSourceSelect.value;
+            
+            if (walletSource === 'private-key') {
+                walletCount = parseSourceWallets().length;
+            } else if (walletSource === 'browser-wallet') {
+                walletCount = 1;
+            }
+            
+            const swapPairs = document.querySelectorAll('.swap-pair').length;
+            const totalTransactions = walletCount * swapPairs;
+            const dexSource = dexSourceSelect.value;
+            const executionOrder = document.querySelector('input[name="executionOrder"]:checked').value;
+            const threads = executionThreads.value;
+            
+            const confirmMessage = `You are about to execute ${totalTransactions} swaps using ${dexSource}
+with ${executionOrder} order using ${threads} thread(s).
+
+${walletSource === 'private-key' 
+    ? `Processing ${walletCount} wallets with ${swapPairs} swap pairs each.` 
+    : `Using your connected wallet (${walletConnectionState.provider}) for ${swapPairs} swap pairs.`}
+
+Do you want to continue?`;
+                
+            showModal(confirmMessage, function() {
+                // Show the results section and loading state
+                resultsSection.style.display = 'block';
+                resultsContent.style.display = 'none';
+                skeletonLoader.style.display = 'block';
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Hide loading state
+                    skeletonLoader.style.display = 'none';
+                    resultsContent.style.display = 'block';
+                    
+                    // Clear previous results
+                    resultsContent.innerHTML = '';
+                    
+                    // Create a successful transaction result
+                    const txSignature = generateRandomSignature();
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'transaction-status status-success';
+                    resultItem.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Batch swaps successful (${totalTransactions} swaps)</strong>
+                            <div class="transaction-id">${txSignature}</div>
+                        </div>
+                    `;
+                    
+                    resultsContent.appendChild(resultItem);
+                    
+                    // Add success details
+                    const details = document.createElement('div');
+                    details.innerHTML = `
+                        <p style="margin-top: 15px; margin-bottom: 10px;">Successfully executed ${swapPairs} swap pairs across ${walletCount} wallets.</p>
+                        <p><strong>DEX Used:</strong> ${getDexDisplayName(dexSource)}</p>
+                        <p><strong>Slippage Tolerance:</strong> ${slippageToleranceInput.value}%</p>
+                        <p><strong>RPC Endpoint:</strong> ${getRpcDisplayName()}</p>
+                        <p><strong>Priority Fee:</strong> ${priorityFee.value} microLAMPORTS</p>
+                        <p><strong>Execution Order:</strong> ${executionOrder}</p>
+                        <p><strong>Threads Used:</strong> ${threads}</p>
+                    `;
+                    
+                    resultsContent.appendChild(details);
+                    
+                    // Scroll to results
+                    resultsSection.scrollIntoView({ behavior: 'smooth' });
+                }, 2000);
+            });
+        });
+
+        // Get display name for DEX source
+        function getDexDisplayName(dexSource) {
+            const dexNames = {
+                'jupiter': 'Jupiter Aggregator',
+                'orca': 'Orca',
+                'raydium': 'Raydium',
+                'openbook': 'OpenBook'
+            };
+            return dexNames[dexSource] || dexSource;
+        }
+
+        // Get display name for RPC endpoint
+        function getRpcDisplayName() {
+            const rpcType = rpcEndpointSelect.value;
+            if (rpcType === 'custom') {
+                return customRpcUrlInput.value || 'Custom (not specified)';
+            }
+            
+            const rpcNames = {
+                'mainnet-beta': 'Mainnet Public RPC',
+                'quicknode': 'QuickNode Enhanced RPC'
+            };
+            
+            return rpcNames[rpcType] || rpcType;
+        }
+
+        // Refresh summary button
+        refreshSummaryBtn.addEventListener('click', updateBatchSummary);
+
+        // Generate random transaction signature for demo
+        function generateRandomSignature() {
+            const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+            let result = '';
+            for (let i = 0; i < 88; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Modal functionality
+        function showModal(message, onConfirm) {
+            const modal = document.getElementById('confirmationModal');
+            const modalMessage = document.getElementById('modalMessage');
+            const confirmButton = document.getElementById('confirmButton');
+            const cancelButton = document.getElementById('cancelButton');
+            
+            modalMessage.textContent = message;
+            modal.style.display = 'flex';
+            
+            confirmButton.onclick = () => {
+                if (onConfirm) onConfirm();
+                modal.style.display = 'none';
+            };
+            
+            cancelButton.onclick = () => {
+                modal.style.display = 'none';
+            };
+        }
+
+        // Anti-spam debounce for buttons
+        const debounce = (func, delay) => {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        };
+
+        // Apply debounce to buttons
+        [executeSwapsBtn, refreshSummaryBtn, resetBtn, addSwapBtn].forEach(button => {
+            button.addEventListener('click', debounce(function(e) {
+                // The original handler is kept because we're using addEventListener
+            }, 300));
+        });
+
+        // Network status indicator
+        function toggleNetworkStatus(isOnline) {
+            const statusElement = document.getElementById('networkStatus');
+            if (!isOnline) {
+                statusElement.style.display = 'block';
+            } else {
+                statusElement.style.display = 'none';
+            }
+        }
+
+        // Event listeners for network status
+        window.addEventListener('online', () => toggleNetworkStatus(true));
+        window.addEventListener('offline', () => toggleNetworkStatus(false));
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add first swap pair
+            addSwapPair();
+            
+            // Check network status
+            toggleNetworkStatus(navigator.onLine);
+            
+            // Setup event listeners for custom RPC
+            rpcEndpointSelect.dispatchEvent(new Event('change'));
+            
+            // Setup event listeners for wallet source
+            walletSourceSelect.dispatchEvent(new Event('change'));
+            
+            // Update summary
+            updateBatchSummary();
+        });
+
+        // Connect to a wallet
+        async function connectWallet(walletName) {
+            try {
+                let walletProvider;
+                
+                // Check if wallet is available
+                if (walletName === 'phantom') {
+                    if (!window.phantom) {
+                        window.open('https://phantom.app/', '_blank');
+                        showModal('Phantom wallet is not installed. Please install it and try again.');
+                        return;
+                    }
+                    walletProvider = window.phantom?.solana;
+                } else if (walletName === 'solflare') {
+                    if (!window.solflare) {
+                        window.open('https://solflare.com/', '_blank');
+                        showModal('Solflare wallet is not installed. Please install it and try again.');
+                        return;
+                    }
+                    walletProvider = window.solflare;
+                }
+                
+                if (!walletProvider) {
+                    showModal(`${walletName} wallet not detected. Please install the extension.`);
+                    return;
+                }
+                
+                // For demo purposes, we'll simulate the connection
+                simulateWalletConnection(walletName);
+                
+            } catch (error) {
+                console.error('Error connecting to wallet:', error);
+                showModal('Failed to connect to wallet. Please try again.');
+            }
+        }
+        
+        // Simulate wallet connection (for demo)
+        function simulateWalletConnection(walletName) {
+            const mockPublicKey = generateRandomWalletAddress();
+            const mockBalance = Math.random() * 10; // Random SOL amount
+            
+            // Update wallet state
+            walletConnectionState = {
+                connected: true,
+                provider: walletName,
+                publicKey: mockPublicKey,
+                balance: mockBalance
+            };
+            
+            // Update UI
+            walletAddressDisplay.textContent = formatWalletAddress(mockPublicKey);
+            walletBalanceDisplay.textContent = `Balance: ${mockBalance.toFixed(4)} SOL`;
+            connectedWalletInfo.style.display = 'block';
+            
+            updateBatchSummary();
+            
+            showModal(`Successfully connected to ${walletName.charAt(0).toUpperCase() + walletName.slice(1)} wallet!`);
+        }
+        
+        // Disconnect wallet
+        function disconnectWallet() {
+            walletConnectionState = {
+                connected: false,
+                provider: null,
+                publicKey: null,
+                balance: 0
+            };
+            
+            walletAddressDisplay.textContent = 'Not connected';
+            walletBalanceDisplay.textContent = 'Balance: 0 SOL';
+            connectedWalletInfo.style.display = 'none';
+            
+            updateBatchSummary();
+        }
+        
+        // Format wallet address for display (truncate middle)
+        function formatWalletAddress(address) {
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+        
+        // Generate random wallet address for demo
+        function generateRandomWalletAddress() {
+            const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+            let result = '';
+            for (let i = 0; i < 44; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Tab switching functionality
+        document.querySelectorAll('.section-tabs .tab-item').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Get target content ID
+                const targetId = this.getAttribute('data-target');
+                
+                // Hide all content sections
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                
+                // Show the target content
+                document.getElementById(targetId).style.display = 'block';
+                
+                // Update active tab
+                document.querySelectorAll('.section-tabs .tab-item').forEach(t => {
+                    t.classList.remove('active');
+                });
+                
+                this.classList.add('active');
+            });
+        });
+
+        // Toggle wallet status (pause/resume)
+        function toggleWalletStatus(walletId, action) {
+            const walletIndex = walletsData.findIndex(w => w.id === walletId);
+            if (walletIndex === -1) return;
+            
+            if (action === 'pause') {
+                walletsData[walletIndex].status = 'paused';
+            } else {
+                walletsData[walletIndex].status = 'ready';
+            }
+            
+            // Refresh the table
+            detectWalletBalances();
+        }
+
+        // Remove wallet from the list
+        function removeWallet(walletId) {
+            showModal("Are you sure you want to remove this wallet from the list?", function() {
+                walletsData = walletsData.filter(w => w.id !== walletId);
+                
+                // Refresh the table
+                detectWalletBalances();
+                
+                // Update batch summary
+                updateBatchSummary();
+            });
+        }
+
+        // Get status color class
+        function getStatusClass(status) {
+            switch (status) {
+                case 'ready': return 'status-ready';
+                case 'processing': return 'status-processing';
+                case 'completed': return 'status-completed';
+                case 'paused': return 'status-paused';
+                case 'error': return 'status-error';
+                default: return '';
+            }
+        }
+
+        // Get status display text
+        function getStatusDisplay(status) {
+            switch (status) {
+                case 'ready': return 'Ready';
+                case 'processing': return 'Processing';
+                case 'completed': return 'Completed';
+                case 'paused': return 'Paused';
+                case 'error': return 'Error';
+                default: return status;
+            }
+        }
+
+        // Parse source wallets from textarea
+        function parseSourceWallets() {
+            const walletsText = walletKeysTextarea.value.trim();
+            if (!walletsText) return [];
+            
+            const lines = walletsText.split('\n');
+            return lines.filter(line => line.trim()).map(line => {
+                return { privateKey: line.trim() };
+            });
+        }
+
+        // Show/hide wallet inputs based on dropdown selection
+        walletSourceSelect.addEventListener('change', updateWalletSourceVisibility);
+        
+        function updateWalletSourceVisibility() {
+            const selectedSource = walletSourceSelect.value;
+            privateKeyGroup.style.display = selectedSource === 'private-key' ? 'block' : 'none';
+            browserWalletGroup.style.display = selectedSource === 'browser-wallet' ? 'block' : 'none';
+            updateBatchSummary();
+        }
+
+        // Show/hide custom RPC input based on selection
+        rpcEndpointSelect.addEventListener('change', function() {
+            customRpcGroup.style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        // Slippage preset buttons
+        slippagePresets.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                slippagePresets.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const value = this.getAttribute('data-value');
+                
+                if (value === 'custom') {
+                    // Enable manual input and keep focus on it
+                    slippageToleranceInput.focus();
+                    // Show the custom input is active
+                    slippageToleranceInput.style.borderColor = 'var(--primary-green)';
+                    slippageToleranceInput.style.backgroundColor = 'rgba(62, 124, 65, 0.05)';
+                } else {
+                    // Set value from preset and reset input styling
+                    slippageToleranceInput.value = value;
+                    slippageToleranceInput.style.borderColor = '#ddd';
+                    slippageToleranceInput.style.backgroundColor = 'var(--background)';
+                }
+            });
+        });
+
+        // Make sure the input field triggers custom selection when clicked or changed
+        slippageToleranceInput.addEventListener('focus', function() {
+            slippagePresets.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.slippage-preset[data-value="custom"]').classList.add('active');
+            this.style.borderColor = 'var(--primary-green)';
+            this.style.backgroundColor = 'rgba(62, 124, 65, 0.05)';
+        });
+
+        // Add a new swap pair
+        addSwapBtn.addEventListener('click', function() {
+            addSwapPair();
+            updateBatchSummary();
+        });
+
+        // Reset form button
+        resetBtn.addEventListener('click', function() {
+            showModal("Are you sure you want to reset all form fields?", function() {
+                document.getElementById('batch-swap-form').reset();
+                swapListContainer.innerHTML = '';
+                swapPairCounter = 0;
+                updateBatchSummary();
+                
+                // Reset slippage presets
+                slippagePresets.forEach(btn => btn.classList.remove('active'));
+                document.querySelector('.slippage-preset[data-value="0.5"]').classList.add('active');
+                slippageToleranceInput.value = 0.5;
+                slippageToleranceInput.style.borderColor = '#ddd';
+                slippageToleranceInput.style.backgroundColor = 'var(--background)';
+                
+                // Clear wallet connection display
+                if (walletConnectionState.connected) {
+                    disconnectWallet();
+                }
+                
+                // Reset the wallet details section
+                walletDetailsSection.style.display = 'none';
+                walletsData = [];
+                
+                // Add first empty swap pair
+                addSwapPair();
+            });
+        });
+
+        // Auto-update summary when text areas change
+        walletKeysTextarea.addEventListener('input', updateBatchSummary);
+
+        // Connect wallet buttons
+        phantomWalletBtn.addEventListener('click', () => connectWallet('phantom'));
+        solflareWalletBtn.addEventListener('click', () => connectWallet('solflare'));
+        
+        // Disconnect wallet button
+        disconnectWalletBtn.addEventListener('click', disconnectWallet);
+
+        // Add a new swap pair to the list
+        function addSwapPair() {
+            const pairId = swapPairCounter++;
+            
+            const swapPairElement = document.createElement('div');
+            swapPairElement.className = 'swap-pair';
+            swapPairElement.dataset.pairId = pairId;
+            
+            // Create token selects and amount inputs
+            const sourceTokenSelect = createTokenSelect(`sourceToken-${pairId}`);
+            const destTokenSelect = createTokenSelect(`destToken-${pairId}`);
+            
+            // Set different default values
+            sourceTokenSelect.value = 'USDC'; // Default source token
+            destTokenSelect.value = 'SOL';    // Default destination token
+            
+            swapPairElement.innerHTML = `
+                <div class="swap-pair-header">
+                    <div class="swap-pair-title">Swap #${pairId + 1}</div>
+                </div>
+                <button type="button" class="remove-pair" data-pair-id="${pairId}">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="swap-direction">
+                    <div class="swap-token source-token">
+                        <div class="form-group">
+                            <label for="sourceToken-${pairId}">From</label>
+                            ${sourceTokenSelect.outerHTML}
+                        </div>
+                        <div class="form-group">
+                            <label for="sourceAmount-${pairId}">Amount</label>
+                            <input type="number" id="sourceAmount-${pairId}" class="form-control source-amount" placeholder="0.00" step="0.000001" min="0">
+                        </div>
+                    </div>
+                    <div class="swap-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="swap-token dest-token">
+                        <div class="form-group">
+                            <label for="destToken-${pairId}">To</label>
+                            ${destTokenSelect.outerHTML}
+                        </div>
+                        <div class="form-group">
+                            <label for="useAllBalance-${pairId}">Use</label>
+                            <select id="useAllBalance-${pairId}" class="form-control">
+                                <option value="specific">Specific</option>
+                                <option value="all">All Balance</option>
+                                <option value="percentage">%</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="percentageGroup-${pairId}" style="display: none;">
+                            <label for="balancePercentage-${pairId}">%</label>
+                            <input type="number" id="balancePercentage-${pairId}" class="form-control" placeholder="50" min="1" max="100" value="50">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            swapListContainer.appendChild(swapPairElement);
+            
+            // Add event listeners for the new swap pair
+            const removeBtn = swapPairElement.querySelector('.remove-pair');
+            removeBtn.addEventListener('click', function() {
+                const pairId = this.getAttribute('data-pair-id');
+                removeSwapPair(pairId);
+            });
+            
+            // Add event listener for balance type selection
+            const useAllBalanceSelect = document.getElementById(`useAllBalance-${pairId}`);
+            const percentageGroup = document.getElementById(`percentageGroup-${pairId}`);
+            
+            useAllBalanceSelect.addEventListener('change', function() {
+                percentageGroup.style.display = this.value === 'percentage' ? 'block' : 'none';
+                updateBatchSummary();
+            });
+            
+            // Add event listeners for amount inputs
+            const sourceAmountInput = document.getElementById(`sourceAmount-${pairId}`);
+            sourceAmountInput.addEventListener('input', updateBatchSummary);
+            
+            // Add change listeners for token selects
+            document.getElementById(`sourceToken-${pairId}`).addEventListener('change', updateBatchSummary);
+            document.getElementById(`destToken-${pairId}`).addEventListener('change', updateBatchSummary);
+        }
+
+        // Remove a swap pair from the list
+        function removeSwapPair(pairId) {
+            const pairElement = document.querySelector(`.swap-pair[data-pair-id="${pairId}"]`);
+            if (pairElement) {
+                pairElement.remove();
+                updateBatchSummary();
+            }
+        }
+
+        // Create a token select element
+        function createTokenSelect(id) {
+            const select = document.createElement('select');
+            select.id = id;
+            select.className = 'form-control';
+            
+            // Add options for each token
+            availableTokens.forEach(token => {
+                const option = document.createElement('option');
+                option.value = token.symbol;
+                option.textContent = `${token.symbol} - ${token.name}`;
+                select.appendChild(option);
+            });
+            
+            // Add custom token option
+            const customOption = document.createElement('option');
+            customOption.value = 'custom';
+            customOption.textContent = 'Custom SPL Token';
+            select.appendChild(customOption);
+            
+            return select;
+        }
+
+        // Refresh wallet button click
+        refreshWalletBtn.addEventListener('click', function() {
+            if (walletsData.length > 0) {
+                detectWalletBalances();
+            } else {
+                // If no wallets are detected yet, prompt to detect balances first
+                const wallets = parseSourceWallets();
+                if (wallets.length > 0) {
+                    detectWalletBalances();
+                } else {
+                    showModal("No wallets found. Please add wallet private keys first.");
+                }
+            }
+        });
+
+        // Clear wallet button click
+        clearWalletBtn.addEventListener('click', function() {
+            showModal("Are you sure you want to clear all wallet data?", function() {
+                // Clear only wallet-related data
+                walletKeysTextarea.value = '';
+                
+                // Reset wallet connection if connected
+                if (walletConnectionState.connected) {
+                    disconnectWallet();
+                }
+                
+                // Clear wallet management section
+                walletsData = [];
+                walletDetailsSection.style.display = 'none';
+                
+                // Update summary to reflect changes
+                updateBatchSummary();
+            });
+        });
+    </script>
+</body>
+</html>

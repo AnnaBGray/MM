@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Transfer - LEGARDENER</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #3E7C41;
+            --secondary-green: #A5D6A7;
+            --background: #F9F5EB;
+            --text: #1B4332;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--background);
+            box-shadow: 0 2px 10px var(--shadow);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+        }
+
+        .logo-text {
+            color: var(--text);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: var(--secondary-green);
+        }
+
+        nav a.active {
+            background-color: var(--primary-green);
+            color: white;
+        }
+
+        /* Page Header */
+        .page-header {
+            background-color: rgba(165, 214, 167, 0.2);
+            padding: 40px 0;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .page-header p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        /* Card Component */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px var(--shadow);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header h2 {
+            font-size: 1.8rem;
+            color: var(--text);
+        }
+
+        .section-divider {
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            margin: 30px 0;
+            padding-top: 30px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(62, 124, 65, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: var(--background);
+            color: var(--text);
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(62, 124, 65, 0.2);
+        }
+
+        .textarea-control {
+            min-height: 120px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: var(--primary-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .button:hover {
+            background-color: #2E5E31;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .button.secondary {
+            background-color: var(--secondary-green);
+            color: var(--text);
+            margin-left: 15px;
+        }
+
+        .button.secondary:hover {
+            background-color: #8DC68F;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Transfer Summary */
+        .transfer-summary {
+            background-color: rgba(165, 214, 167, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .wallet-stats {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Results Section */
+        .results-card {
+            display: none;
+        }
+
+        .transaction-status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .status-error {
+            background-color: rgba(244, 67, 54, 0.1);
+            border-left: 4px solid #F44336;
+        }
+
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #FFC107;
+        }
+
+        .transaction-id {
+            font-family: monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+
+        /* Skeleton Loading */
+        .skeleton-loader {
+            display: none;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            height: 20px;
+            margin-bottom: 10px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Network Status */
+        .network-status {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #F44336;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 500;
+        }
+
+        .network-status i {
+            margin-right: 10px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal h3 {
+            margin-bottom: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-logo img {
+            height: 40px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-green);
+        }
+
+        .copyright {
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .button.secondary {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .footer-logo {
+                justify-content: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+
+            .summary-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* New styles for the two-column layout */
+        .wallet-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .wallet-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Network Status Indicator -->
+    <div class="network-status" id="networkStatus">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Network connection lost. Reconnecting...</span>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="LEGARDENER Logo">
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="wallet-gen.html">Wallet Generator</a></li>
+                    <li><a href="bulk-transfer.html" class="active">Bulk Transfer</a></li>
+                    <li><a href="withdraw.html">CEX Withdrawal</a></li>
+                    <li><a href="market-swap.html">Token Swap</a></li>
+                    <li><a href="settings.html">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Multi-to-Multi Wallet Bulk Transfers</h1>
+            <p>Efficiently move assets between multiple wallets with our batch transfer tool. Import source wallets and destination addresses in bulk.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Bulk Transfer Configuration</h2>
+            </div>
+
+            <form id="bulk-transfer-form">
+                <!-- Token and Amount Section - NOW AT TOP -->
+                <div class="section">
+                    <h3 class="section-title">
+                        <div class="section-icon"><i class="fas fa-coins"></i></div>
+                        Token & Amount
+                    </h3>
+                    <div class="form-group">
+                        <label for="transferToken">Token to Transfer</label>
+                        <select id="transferToken" class="form-control">
+                            <option value="SOL">SOL (Native Token)</option>
+                            <option value="USDC">USDC</option>
+                            <option value="BONK">BONK</option>
+                            <option value="JUP">JUP</option>
+                            <option value="custom">Custom SPL Token</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="customTokenGroup" style="display: none;">
+                        <label for="customTokenAddress">Custom Token Address</label>
+                        <input type="text" id="customTokenAddress" class="form-control" placeholder="Enter token mint address">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transferAmount">Amount per Transfer</label>
+                        <input type="number" id="transferAmount" class="form-control" placeholder="0.00" step="0.000001" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transferType">Transfer Distribution</label>
+                        <select id="transferType" class="form-control">
+                            <option value="equal">Equal distribution to all destinations</option>
+                            <option value="random">Random distribution within range</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="randomRangeGroup" style="display: none;">
+                        <label for="minAmount">Min Amount</label>
+                        <input type="number" id="minAmount" class="form-control" placeholder="0.00" step="0.000001" min="0">
+                        
+                        <label for="maxAmount" style="margin-top: 10px;">Max Amount</label>
+                        <input type="number" id="maxAmount" class="form-control" placeholder="0.00" step="0.000001" min="0">
+                    </div>
+                </div>
+
+                <!-- Transfer Summary -->
+                <div class="section-divider"></div>
+                <div class="transfer-summary" id="transferSummary">
+                    <div class="summary-header">
+                        <h3>Transfer Summary</h3>
+                        <button type="button" id="refreshSummaryBtn" class="button secondary">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-wallet"></i>
+                            <div>
+                                <div class="stat-value" id="sourceWalletCount">0</div>
+                                <div class="stat-label">Source Wallets</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-arrow-right"></i>
+                            <div>
+                                <div class="stat-value" id="destWalletCount">0</div>
+                                <div class="stat-label">Destination Wallets</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-coins"></i>
+                            <div>
+                                <div class="stat-value">
+                                    <span id="totalAmount">0</span>
+                                    <span id="tokenSymbol">SOL</span>
+                                </div>
+                                <div class="stat-label">Total Amount</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two-column layout for wallets -->
+                <div class="section-divider"></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <!-- Source Wallets Section - LEFT COLUMN -->
+                    <div class="section">
+                        <h3 class="section-title">
+                            <div class="section-icon"><i class="fas fa-wallet"></i></div>
+                            Source Wallets
+                        </h3>
+                        <div class="form-group">
+                            <label for="sourceWallets">Source Wallet Private Keys (one per line)</label>
+                            <textarea id="sourceWallets" class="form-control textarea-control" placeholder="Enter Solana wallet private keys, one per line"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Destination Wallets Section - RIGHT COLUMN -->
+                    <div class="section">
+                        <h3 class="section-title">
+                            <div class="section-icon"><i class="fas fa-arrow-right"></i></div>
+                            Destination Wallets
+                        </h3>
+                                                <div class="form-group">                            <label for="destinationWallets">Destination Wallet Addresses (one per line)</label>                            <textarea id="destinationWallets" class="form-control textarea-control" placeholder="Enter Solana wallet addresses, one per line"></textarea>                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="executeTransferBtn" class="button">Execute Transfers</button>
+                    <button type="reset" id="resetBtn" class="button secondary">Reset Form</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Section (initially hidden) -->
+        <div class="card results-card" id="results-section">
+            <div class="card-header">
+                <h2>Transfer Results</h2>
+            </div>
+            
+            <!-- Skeleton loading effect -->
+            <div class="skeleton-loader" id="skeleton-loader">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+
+            <!-- Results will be populated by JavaScript -->
+            <div id="results-content"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <img src="logo.png" alt="LEGARDENER Logo">
+            </div>
+            <div class="footer-links">
+                <a href="#">Documentation</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="copyright">
+                &copy; 2023 LEGARDENER. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <h3>Confirm Action</h3>
+            <p id="modalMessage">Are you sure you want to proceed with this action?</p>
+            <div class="modal-buttons">
+                <button class="button" id="confirmButton">Confirm</button>
+                <button class="button secondary" id="cancelButton">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const transferTokenSelect = document.getElementById('transferToken');
+        const customTokenGroup = document.getElementById('customTokenGroup');
+        const transferTypeSelect = document.getElementById('transferType');
+        const randomRangeGroup = document.getElementById('randomRangeGroup');
+        const executeTransferBtn = document.getElementById('executeTransferBtn');
+        const refreshSummaryBtn = document.getElementById('refreshSummaryBtn');
+        const sourceWalletCountEl = document.getElementById('sourceWalletCount');
+        const destWalletCountEl = document.getElementById('destWalletCount');
+        const totalAmountEl = document.getElementById('totalAmount');
+        const tokenSymbolEl = document.getElementById('tokenSymbol');
+        const resultsSection = document.getElementById('results-section');
+        const skeletonLoader = document.getElementById('skeleton-loader');
+        const resultsContent = document.getElementById('results-content');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Show/hide custom token input based on selection
+        transferTokenSelect.addEventListener('change', function() {
+            customTokenGroup.style.display = this.value === 'custom' ? 'block' : 'none';
+            tokenSymbolEl.textContent = this.value === 'custom' ? 'Tokens' : this.value;
+            updateTransferSummary();
+        });
+
+        // Show/hide random range inputs based on selection
+        transferTypeSelect.addEventListener('change', function() {
+            randomRangeGroup.style.display = this.value === 'random' ? 'block' : 'none';
+            updateTransferSummary();
+        });
+
+        // Reset form button
+        resetBtn.addEventListener('click', function() {
+            showModal("Are you sure you want to reset all form fields?", function() {
+                document.getElementById('bulk-transfer-form').reset();
+                customTokenGroup.style.display = 'none';
+                randomRangeGroup.style.display = 'none';
+                updateTransferSummary();
+            });
+        });
+
+        // Auto-update summary when text areas change
+        document.getElementById('sourceWallets').addEventListener('input', updateTransferSummary);
+        document.getElementById('destinationWallets').addEventListener('input', updateTransferSummary);
+        document.getElementById('transferAmount').addEventListener('input', updateTransferSummary);
+        document.getElementById('minAmount').addEventListener('input', updateTransferSummary);
+        document.getElementById('maxAmount').addEventListener('input', updateTransferSummary);
+
+        // Update transfer summary
+        function updateTransferSummary() {
+            const sourceWallets = parseSourceWallets();
+            const destWallets = parseDestinationWallets();
+            const amount = parseFloat(document.getElementById('transferAmount').value) || 0;
+            const transferType = document.getElementById('transferType').value;
+            const tokenSymbol = transferTokenSelect.value === 'custom' 
+                ? 'Tokens'
+                : transferTokenSelect.value;
+            
+            // Update wallet counts
+            sourceWalletCountEl.textContent = sourceWallets.length;
+            destWalletCountEl.textContent = destWallets.length;
+            tokenSymbolEl.textContent = tokenSymbol;
+            
+            // Calculate total amount
+            let totalAmount = 0;
+            if (transferType === 'equal') {
+                totalAmount = amount * destWallets.length;
+            } else if (transferType === 'random') {
+                const minAmount = parseFloat(document.getElementById('minAmount').value) || 0;
+                const maxAmount = parseFloat(document.getElementById('maxAmount').value) || 0;
+                const avgAmount = (minAmount + maxAmount) / 2;
+                totalAmount = avgAmount * destWallets.length;
+            }
+            
+            totalAmountEl.textContent = totalAmount.toFixed(6);
+        }
+
+        // Parse source wallets from textarea
+        function parseSourceWallets() {
+            const sourceWalletsText = document.getElementById('sourceWallets').value.trim();
+            if (!sourceWalletsText) return [];
+            
+            const lines = sourceWalletsText.split('\n');
+            return lines.filter(line => line.trim()).map(line => {
+                const parts = line.split(',');
+                if (parts.length >= 2) {
+                    return {
+                        address: parts[0].trim(),
+                        privateKey: parts[1].trim()
+                    };
+                } else {
+                    return {
+                        privateKey: line.trim()
+                    };
+                }
+            });
+        }
+
+        // Parse destination wallets from textarea
+        function parseDestinationWallets() {
+            const destWalletsText = document.getElementById('destinationWallets').value.trim();
+            if (!destWalletsText) return [];
+            
+            const lines = destWalletsText.split('\n');
+            return lines.filter(line => line.trim()).map(line => {
+                const parts = line.split(',');
+                if (parts.length >= 2) {
+                    return {
+                        address: parts[0].trim(),
+                        label: parts[1].trim()
+                    };
+                } else {
+                    return {
+                        address: line.trim()
+                    };
+                }
+            });
+        }
+
+        // Validate all inputs before execution
+        function validateInputs() {
+            const sourceWallets = parseSourceWallets();
+            const destWallets = parseDestinationWallets();
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+            const transferType = document.getElementById('transferType').value;
+            const tokenType = document.getElementById('transferToken').value;
+            
+            if (sourceWallets.length === 0) {
+                showModal("Please enter at least one source wallet private key.");
+                return false;
+            }
+            
+            if (destWallets.length === 0) {
+                showModal("Please enter at least one destination wallet address.");
+                return false;
+            }
+            
+            if (isNaN(amount) || amount <= 0) {
+                showModal("Please enter a valid transfer amount.");
+                return false;
+            }
+            
+            if (tokenType === 'custom') {
+                const customToken = document.getElementById('customTokenAddress').value.trim();
+                if (!customToken) {
+                    showModal("Please enter a custom token address.");
+                    return false;
+                }
+            }
+            
+            if (transferType === 'random') {
+                const minAmount = parseFloat(document.getElementById('minAmount').value);
+                const maxAmount = parseFloat(document.getElementById('maxAmount').value);
+                
+                if (isNaN(minAmount) || isNaN(maxAmount) || minAmount < 0 || maxAmount <= minAmount) {
+                    showModal("Please enter valid min and max amounts for random distribution.");
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // Execute transfers
+        executeTransferBtn.addEventListener('click', function() {
+            if (!validateInputs()) return;
+            
+            const sourceWallets = parseSourceWallets();
+            const destWallets = parseDestinationWallets();
+            const sourceCount = sourceWallets.length;
+            const destCount = destWallets.length;
+            const totalTransfers = sourceCount * destCount;
+            const tokenType = document.getElementById('transferToken').value;
+            const tokenSymbol = tokenType === 'custom' 
+                ? document.getElementById('customTokenAddress').value.trim().substring(0, 5) + '...'
+                : tokenType;
+                
+            showModal(
+                `You are about to execute ${totalTransfers} transfers from ${sourceCount} source wallets to ${destCount} destination wallets. This will transfer approximately ${totalAmountEl.textContent} ${tokenSymbol} in total. Do you want to continue?`,
+                function() {
+                    // Show the results section and loading state
+                    resultsSection.style.display = 'block';
+                    resultsContent.style.display = 'none';
+                    skeletonLoader.style.display = 'block';
+                    
+                    // Simulate API call delay
+                    setTimeout(() => {
+                        // Hide loading state
+                        skeletonLoader.style.display = 'none';
+                        resultsContent.style.display = 'block';
+                        
+                        // Clear previous results
+                        resultsContent.innerHTML = '';
+                        
+                        // Create a successful transaction result
+                        const txSignature = generateRandomSignature();
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'transaction-status status-success';
+                        resultItem.innerHTML = `
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <strong>Batch transaction successful (${totalTransfers} transfers)</strong>
+                                <div class="transaction-id">${txSignature}</div>
+                            </div>
+                        `;
+                        
+                        resultsContent.appendChild(resultItem);
+                        
+                        // Add success details
+                        const details = document.createElement('div');
+                        details.innerHTML = `
+                            <p style="margin-top: 15px; margin-bottom: 10px;">Successfully transferred from ${sourceCount} source wallets to ${destCount} destination wallets.</p>
+                            <p><strong>Total Amount:</strong> ${totalAmountEl.textContent} ${tokenSymbol}</p>
+                        `;
+                        resultsContent.appendChild(details);
+                        
+                        // Scroll to results
+                        resultsSection.scrollIntoView({ behavior: 'smooth' });
+                    }, 2000);
+                }
+            );
+        });
+
+        // Refresh summary button
+        refreshSummaryBtn.addEventListener('click', updateTransferSummary);
+
+        // Generate random transaction signature for demo
+        function generateRandomSignature() {
+            const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+            let result = '';
+            for (let i = 0; i < 88; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Modal functionality
+        function showModal(message, onConfirm) {
+            const modal = document.getElementById('confirmationModal');
+            const modalMessage = document.getElementById('modalMessage');
+            const confirmButton = document.getElementById('confirmButton');
+            const cancelButton = document.getElementById('cancelButton');
+            
+            modalMessage.textContent = message;
+            modal.style.display = 'flex';
+            
+            confirmButton.onclick = () => {
+                if (onConfirm) onConfirm();
+                modal.style.display = 'none';
+            };
+            
+            cancelButton.onclick = () => {
+                modal.style.display = 'none';
+            };
+        }
+
+        // Anti-spam debounce for buttons
+        const debounce = (func, delay) => {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        };
+
+        // Apply debounce to buttons
+        [executeTransferBtn, refreshSummaryBtn, resetBtn].forEach(button => {
+            button.addEventListener('click', debounce(function(e) {
+                // The original handler is kept because we're using addEventListener
+            }, 300));
+        });
+
+        // Network status indicator
+        function toggleNetworkStatus(isOnline) {
+            const statusElement = document.getElementById('networkStatus');
+            if (!isOnline) {
+                statusElement.style.display = 'block';
+            } else {
+                statusElement.style.display = 'none';
+            }
+        }
+
+        // Event listeners for network status
+        window.addEventListener('online', () => toggleNetworkStatus(true));
+        window.addEventListener('offline', () => toggleNetworkStatus(false));
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleNetworkStatus(navigator.onLine);
+            updateTransferSummary();
+        });
+    </script>
+</body>
+</html> 

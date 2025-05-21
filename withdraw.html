@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEX Withdrawal - LEGARDENER</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #3E7C41;
+            --secondary-green: #A5D6A7;
+            --background: #F9F5EB;
+            --text: #1B4332;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--background);
+            box-shadow: 0 2px 15px var(--shadow);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+        }
+
+        .logo-text {
+            color: var(--text);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: var(--secondary-green);
+        }
+
+        nav a.active {
+            background-color: var(--primary-green);
+            color: white;
+        }
+
+        /* Page Header */
+        .page-header {
+            background-color: rgba(165, 214, 167, 0.2);
+            padding: 40px 0;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .page-header p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        /* Coming Soon Section */
+        .coming-soon {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .coming-soon-icon {
+            font-size: 5rem;
+            color: var(--primary-green);
+            margin-bottom: 30px;
+        }
+
+        .coming-soon h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .coming-soon p {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            font-size: 1.2rem;
+            color: rgba(27, 67, 50, 0.8);
+        }
+
+        .button {
+            display: inline-block;
+            background-color: var(--primary-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .button:hover {
+            background-color: #2E5E31;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Features List */
+        .features-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            text-align: left;
+        }
+
+        .feature-item {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px var(--shadow);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .feature-item i {
+            color: var(--primary-green);
+            font-size: 1.5rem;
+            margin-top: 3px;
+        }
+
+        .feature-item h3 {
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .feature-item p {
+            font-size: 0.95rem;
+            color: rgba(27, 67, 50, 0.8);
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-logo img {
+            height: 40px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-green);
+        }
+
+        .copyright {
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .footer-logo {
+                justify-content: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="LEGARDENER Logo">
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="wallet-gen.html">Wallet Generator</a></li>
+                    <li><a href="bulk-transfer.html">Bulk Transfer</a></li>
+                    <li><a href="withdraw.html" class="active">CEX Withdrawal</a></li>
+                    <li><a href="market-swap.html">Token Swap</a></li>
+                    <li><a href="settings.html">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>CEX Withdrawal Management</h1>
+            <p>Automate and optimize withdrawals from centralized exchanges to multiple wallet destinations.</p>
+        </div>
+    </section>
+
+    <!-- Coming Soon -->
+    <section class="coming-soon container">
+        <div class="coming-soon-icon">
+            <i class="fas fa-university"></i>
+        </div>
+        <h2>CEX Withdrawal Tool Coming Soon</h2>
+        <p>Our CEX withdrawal automation tool is currently under development. Here's what to expect when it launches:</p>
+        
+        <div class="features-list">
+            <div class="feature-item">
+                <i class="fas fa-layer-group"></i>
+                <div>
+                    <h3>Batch Withdrawals</h3>
+                    <p>Schedule withdrawals to multiple wallets simultaneously from various exchanges.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-random"></i>
+                <div>
+                    <h3>Distribution Patterns</h3>
+                    <p>Set up equal, random, or custom distribution schedules to destination wallets.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <h3>Scheduling</h3>
+                    <p>Schedule automated withdrawals at custom intervals to optimize timing and fees.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-exchange-alt"></i>
+                <div>
+                    <h3>Multiple Exchange Support</h3>
+                    <p>Support for popular exchanges including Binance, FTX, KuCoin, and more.</p>
+                </div>
+            </div>
+        </div>
+        
+        <a href="index.html" class="button">Return to Homepage</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <img src="logo.png" alt="LEGARDENER Logo">
+            </div>
+            <div class="footer-links">
+                <a href="#">Documentation</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="copyright">
+                &copy; 2023 LEGARDENER. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 
